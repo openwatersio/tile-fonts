@@ -18,9 +18,17 @@ that Worker would tie font availability to bathymetry deploys.
 
 | Stack | Used for |
 |---|---|
-| `Noto Sans Italic` | Soundings and depth labels. S-4 §B-412.1 sets soundings in sloping sans-serif. |
+| `Noto Sans Italic` | Soundings. S-4 §B-412.1 sets them in sloping sans-serif. |
 | `Noto Sans Regular` | Place names, and soundings of lower reliability — §B-412.4 reserves upright numerals for exactly that. |
-| `Noto Sans Medium` | Emphasis. |
+| `Noto Sans Medium`, `Noto Sans SemiBold` | Emphasis, and legibility at smaller sizes: a halo eats into a light stroke, so weight buys more than size does. |
+| `Noto Sans Medium Italic`, `Noto Sans SemiBold Italic` | The same, for soundings. |
+
+Weights stop at SemiBold and widths at normal, deliberately. Only the Latin face has italics —
+no Noto script family ships one — so an italic stack is Latin-italic over upright fallbacks, and
+the Condensed widths have no non-Latin counterpart at all, which would make a Condensed stack
+silently tofu outside Latin. Thin and ExtraLight are wrong for a chart on their own terms:
+hairline strokes vanish under glare, and §B-412.4 reserves hairline numerals for soundings of
+*lower reliability*, so the weight would carry a meaning nobody intended.
 
 Each stack is composed from many per-script Noto faces (see [fonts.json](fonts.json)), so
 worldwide coverage is a font list rather than a code change. Stack names are the contract with
@@ -50,7 +58,7 @@ monolithic Noto repo (Tibetan is not), and a stack with a silent hole renders as
 Faces are merged in listed order, and that order decides who wins an overlapping codepoint —
 the base Latin face is first so its digits are not shadowed by a script face.
 
-Current output: Regular 12,225 glyphs, Medium 6,530, Italic 3,278, 256 ranges each.
+Current output: six stacks, ~12,225 glyphs and 256 ranges each, 43 MB total.
 
 ## The coverage gate
 
