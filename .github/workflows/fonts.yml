@@ -1,0 +1,53 @@
+name: fonts
+
+# Build and verify on every change; publish only when asked. Publishing is a manual step
+# because the stack names are a contract with every deployed style — a bad publish is not a
+# broken build, it is missing numbers on a chart.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: "Upload the built stacks to R2"
+        type: boolean
+        default: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cache the glyph tool and the pinned Noto release
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/bin/build_pbf_glyphs
+            build/noto-*.tar.gz
+          key: fonts-${{ hashFiles('fonts.json') }}
+
+      - name: Install build_pbf_glyphs
+        run: command -v build_pbf_glyphs || cargo install build_pbf_glyphs
+
+      - run: scripts/build.sh
+
+      # The gate that matters: a missing glyph never errors at render time, it just leaves a
+      # number off the chart.
+      - run: scripts/verify.py
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: fonts
+          path: build/fonts
+          retention-days: 14
+
+      - name: Publish to R2
+        if: github.event_name == 'workflow_dispatch' && inputs.publish
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          AWS_ENDPOINT_URL: ${{ secrets.R2_ENDPOINT_URL }}
+          AWS_DEFAULT_REGION: auto
+        run: scripts/publish.sh
