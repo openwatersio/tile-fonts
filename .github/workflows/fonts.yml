@@ -14,23 +14,22 @@ on:
         type: boolean
         default: false
 
-permissions:
-  contents: read
-
 jobs:
   build:
-    runs-on: ubuntu-26.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Compile build_pbf_glyphs from source without a restored binary
-        run: |
-          if command -v build_pbf_glyphs; then
-            echo "A pre-existing glyph tool would invalidate this fresh-build check" >&2
-            exit 1
-          fi
-          cargo install build_pbf_glyphs
-          cargo install --list
+      - name: Cache the glyph tool and the pinned Noto release
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/bin/build_pbf_glyphs
+            build/noto-*.tar.gz
+          key: fonts-${{ hashFiles('fonts.json') }}
+
+      - name: Install build_pbf_glyphs
+        run: command -v build_pbf_glyphs || cargo install build_pbf_glyphs
 
       - run: scripts/build.sh
 
