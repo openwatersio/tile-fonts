@@ -84,4 +84,4 @@ dedicated hostname costs nothing and changes only the `glyphs` URL in the styles
 ## Licence
 
 The fonts are [SIL Open Font License 1.1](OFL.txt) and are redistributed with it. Everything in
-this repo that is not a font is BSD-3-Clause, matching the rest of Open Waters.
+this repo that is not a font is © Open Water Software, LLC and [BSD-3-Clause](LICENSE).
