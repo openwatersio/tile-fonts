@@ -21,7 +21,7 @@ jobs:
       - uses: actions/checkout@v4.4.0
 
       - name: Cache the glyph tool and the pinned Noto release
-        uses: actions/cache@v4.3.0
+        uses: actions/cache@v6.1.0
         with:
           path: |
             ~/.cargo/bin/build_pbf_glyphs
