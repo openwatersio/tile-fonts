@@ -18,10 +18,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4.4.0
 
       - name: Cache the glyph tool and the pinned Noto release
-        uses: actions/cache@v4
+        uses: actions/cache@v4.3.0
         with:
           path: |
             ~/.cargo/bin/build_pbf_glyphs
@@ -37,7 +37,7 @@ jobs:
       # number off the chart.
       - run: scripts/verify.py
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4.6.2
         with:
           name: fonts
           path: build/fonts
